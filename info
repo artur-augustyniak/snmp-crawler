@@ -1,0 +1,96 @@
+Słoniutki,
+
+Poniżej przesyłam format tabelek
+
+mysql> show tables;
++--------------------+
+| Tables_in_przemekm |
++--------------------+
+| CDP                |
+| Device_type        |
+| Devices            |
++--------------------+
+3 rows in set (0.00 sec)
+
+mysql> describe CDP;
++--------------+---------+------+-----+---------+----------------+
+| Field        | Type    | Null | Key | Default | Extra          |
++--------------+---------+------+-----+---------+----------------+
+| ID           | int(11) | NO   | PRI | NULL    | auto_increment |
+| Device_ID    | int(11) | NO   |     | NULL    |                |
+| Connected_ID | int(11) | NO   |     | NULL    |                |
++--------------+---------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> describe Device_type;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| ID    | int(60)     | NO   |     | NULL    |       |
+| Name  | varchar(60) | NO   |     | NULL    |       |
+| Type  | varchar(60) | NO   |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> describe Devices;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| ID    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| Name  | varchar(60) | NO   |     | NULL    |                |
+| IP    | varchar(20) | NO   |     | NULL    |                |
+| Model | varchar(60) | NO   |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+
+To co mnie koles poprosil jeszcze to zeby stwierdzac jaki typ urzadzenia wykrylismy na podstawie nowego oida. Oid zwaraca nam w hexach wartosci o takie o:
+
+przemekm@Konsola:~$ snmpwalk -v 1 -c public  172.25.46.131  1.3.6.1.4.1.9.9.23.1.2.1.1.9
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.3.21 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.4.1 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.5.19 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.7.20 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.9.18 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.10.15 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.12.9 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.13.11 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.14.8 = Hex-STRING: 00 00 04 90
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.48.11 = Hex-STRING: 00 00 00 29
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.49.15 = Hex-STRING: 00 00 00 28
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.50.3 = Hex-STRING: 00 00 00 28
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.51.2 = Hex-STRING: 00 00 00 29
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.52.10 = Hex-STRING: 00 00 00 28
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.53.3 = Hex-STRING: 00 00 00 28
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.54.2 = Hex-STRING: 00 00 00 28
+iso.3.6.1.4.1.9.9.23.1.2.1.1.9.113.19 = Hex-STRING: 00 00 00 28
+
+Te hexy  odpowiadaja temu:
+
+(Bit) - Description
+
+(0x400) - Two-Port MAC Relay.
+
+(0x200) - CAST Phone Port / CVTA / Supports-STP-Dispute depending upon platform.
+
+(0x100) - Remotely-Managed Device.
+
+(0x80) - VoIP Phone.
+
+0x40) - Provides level 1 functionality.
+
+(0x20) - The bridge or switch does not forward IGMP Report packets on non router ports.
+
+(0x10) - Sends and receives packets for at least one network layer protocol. If the device is routing the protocol, this bit should not be set.
+
+(0x08) - Performs level 2 switching. The difference between this bit and bit 0x02 is that a switch does not run the Spanning-Tree Protocol. This device is assumed to be deployed in a physical loop-free topology.
+
+(0x04) - Performs level 2 source-route bridging. A source-route bridge would set both this bit and bit 0x02.
+
+(0x02) - Performs level 2 transparent bridging.
+
+0x01) - Performs level 3 routing for at least one network layer protocol.
+
+Koles mowil ze trzeba wykonac operacje logiczna AND  zeby dopasowac wynik to tej legendy i wrzucac to do bazy.
+
+Jesli masz ochote, mozemy sie spotkac w ten weekend i podzialac troche. 
